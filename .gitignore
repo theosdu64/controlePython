@@ -1,0 +1,43 @@
+# === Python ===
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+.env/
+.venv/
+env/
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Logs / cache
+*.log
+.cache/
+pip-wheel-metadata/
+
+# === PyCharm / IntelliJ IDEA ===
+# User-specific stuff (ne JAMAIS versionner ça)
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/dictionaries
+.idea/**/shelf
+
+# Sensitive or machine-specific settings
+.idea/**/dataSources/
+.idea/**/dataSources.ids
+.idea/**/dataSources.local.xml
+.idea/**/sqlDataSources.xml
+.idea/**/dynamic.xml
+.idea/**/uiDesigner.xml
+
+# Other
+.DS_Store
+Thumbs.db
+
+# Secrets
+*.env
+*.secret
