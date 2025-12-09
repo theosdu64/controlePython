@@ -4,9 +4,7 @@
 Classe livre
 """
 from dataclasses import dataclass
-from typing import List
-
-from src.daos import dao
+from typing import Optional, Dict, Any
 from src.daos.dao import Dao
 from src.model.livre import Livre
 
@@ -14,14 +12,13 @@ from src.model.livre import Livre
 @dataclass
 class LivreDao(Dao[Livre]):
 
-    def read(self, id_livre: int) -> Livre:
+    def read(self, id_livre: int) -> Optional[Dict[str, Any]]:
+        """
+        Récupere un livre avec auteur, éditeur
+        Retourne un dict avec: livre, auteur_nom, auteur_prenom, editeur_nom
+        """
         try:
-            """
-            Recupere titre, resume , date de parution , nb de page, isbn , prix du livre  
-            nom et prenom de l'auteur et le nom de l'éditeur
-            Select dans livre avec Jointure de personne , auteur et editeur
-            """
-            with dao.connection.cursor() as cursor:
+            with Dao.connection.cursor() as cursor:
                 sql_livre = """
                     SELECT l.titre, l.resume, l.date_parution, l.nb_page, l.isbn, l.prix,e.nom as editeur_nom ,p.nom as auteur_nom, p.prenom as auteur_prenom
                     FROM livre as l
@@ -32,14 +29,14 @@ class LivreDao(Dao[Livre]):
                     INNER JOIN personne as p 
                     on a.id_auteur = p.id_personne
                     WHERE l.id_livre = %s
-                    """
-                cursor.execute(sql_livre, id_livre)
+                """
+                cursor.execute(sql_livre, (id_livre,))
                 row = cursor.fetchone()
 
                 if row is None:
                     return None
 
-                livre =  Livre(
+                livre = Livre(
                     titre=row["titre"],
                     resume=row["resume"],
                     date_parution=row["date_parution"],
@@ -47,20 +44,27 @@ class LivreDao(Dao[Livre]):
                     isbn=row["isbn"],
                     prix=row["prix"]
                 )
-                return livre, row["auteur_nom"], row["auteur_prenom"], row["editeur_nom"]
+                livre.id_livre = id_livre
+
+                return {
+                    "livre": livre,
+                    "auteur_nom": row["auteur_nom"],
+                    "auteur_prenom": row["auteur_prenom"],
+                    "editeur_nom": row["editeur_nom"]
+                }
 
         except Exception as e:
             print("Erreur de la lecture du livre :", e)
             return None
 
-    def read_all(self) -> List[Livre]:
-        raise NotImplemented
+    def read_all(self) -> list[Livre]:
+        raise NotImplementedError
 
     def delete(self, id: int) -> bool:
-        raise NotImplemented
+        raise NotImplementedError
 
     def create(self, livre: Livre) -> Livre:
-        raise NotImplemented
+        raise NotImplementedError
 
     def update(self, livre: Livre) -> Livre:
-        raise NotImplemented
+        raise NotImplementedError
