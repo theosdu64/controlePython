@@ -4,3 +4,4 @@
     - Diagramme de classe
     - Annexe
 - ajouter les fichier loo dans meurise
+- ajouter la methode de recuperation des personnage dans un livre
