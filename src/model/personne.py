@@ -6,11 +6,13 @@ Classe abstraite Personne, mère de Jury et Student
 
 from dataclasses import dataclass, field
 from abc import ABC
+from typing import Optional
+
 
 @dataclass
 class Personne(ABC):
     """Personne liée aux prix goncourt : Jury et Auteur."""
-    id_personne: int
+    id_personne: Optional[int]
     nom: str
     prenom: str
 
