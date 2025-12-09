@@ -21,7 +21,8 @@ def main() -> None:
     print("-" * 60)
     print(Goncourt.get_editeur_by_id(1))
     print("-" * 60)
-
+    print(Goncourt.get_personnage_by_id(2))
+    print("-" * 60)
 
 if __name__ == "__main__":
     main()

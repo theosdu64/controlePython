@@ -4,7 +4,6 @@
 Classe Auteur d'un livre
 """
 
-import dataclasses
 from typing import Optional
 from dataclasses import dataclass
 from src.daos.dao import Dao

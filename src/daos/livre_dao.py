@@ -6,6 +6,7 @@ Classe livre
 from dataclasses import dataclass
 from typing import Optional, Dict, Any
 from src.daos.dao import Dao
+from src.daos.personnage_dao import Personnage
 from src.model.livre import Livre
 
 
@@ -67,4 +68,16 @@ class LivreDao(Dao[Livre]):
         raise NotImplementedError
 
     def update(self, livre: Livre) -> Livre:
+        raise NotImplementedError
+
+    def get_personnage_by_livre_id(self, livre_id: int) -> Optional[Personnage]:
+        """
+        SELECT l.titre as titre_du_livre ,p.nom as nom_du_personnage
+from personnage as p
+INNER JOIN livre as l
+ON l.isbn = p.isbn_livre
+WHERE l.id_livre = 1
+        :param livre_id:
+        :return:
+        """
         raise NotImplementedError

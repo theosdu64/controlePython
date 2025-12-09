@@ -3,12 +3,15 @@ from typing import Optional, Any, Dict
 from src.daos.auteur_dao import AuteurDao
 from src.daos.jury_dao import JuryDao
 from src.daos.livre_dao import LivreDao
+from src.daos.personnage_dao import PersonnageDao
+from src.model.personnage import Personnage
 from src.model.auteur import Auteur
 from src.model.jury import Jury
 from src.model.livre import Livre
-
 from src.daos.editeur_dao import EditeurDao
 from src.model.editeur import Editeur
+
+
 
 @dataclass
 class Goncourt:
@@ -55,3 +58,14 @@ class Goncourt:
         """
         editeur_dao : Editeur = EditeurDao()
         return editeur_dao.read(id_editeur)
+
+    @staticmethod
+    def get_personnage_by_id(id_personnage : int) -> Optional[Personnage]:
+        """
+        Recupere le nom du personnage a l'aide de son id
+
+        :param id_personnage:
+        :return: un personnage
+        """
+        personnage_dao : Personnage = PersonnageDao()
+        return personnage_dao.read(id_personnage)
