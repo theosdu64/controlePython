@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from .personne import Personne
 
 @dataclass
-class AuteurPersonne(Personne):
+class Auteur(Personne):
     """Auteur d'un livre."""
     def __str__(self) -> str:
         return f"Auteur: {super().__str__()} "
