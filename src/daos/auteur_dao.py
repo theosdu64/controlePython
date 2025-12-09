@@ -17,7 +17,8 @@ class AuteurDao(Dao[Auteur]):
     def read(self, id_auteur: int) -> Optional[Auteur]:
         try:
             """
-            Jointure entre personne et auteur pour recuperer nom et prenom 
+            Recupere nom et prenom de l'auteur
+            Jointure entre personne et auteur 
             """
             with Dao.connection.cursor() as cursor:
                 sql_personne = """
