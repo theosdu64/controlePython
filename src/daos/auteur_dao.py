@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+
+"""
+Classe Auteur d'un livre
+"""
+
 import dataclasses
 from typing import Optional
 
