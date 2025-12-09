@@ -56,7 +56,7 @@ class AuteurDao(Dao[Auteur]):
                 )
 
         except Exception as e:
-            print("Erreur lors de la lecture d'un auteur :", e)
+            print("Erreur de la lecture d'un auteur :", e)
             return None
 
     def update(self, id_auteur, obj : Auteur) -> bool:
