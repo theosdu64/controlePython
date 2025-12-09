@@ -14,6 +14,34 @@ from src.model.auteur import Auteur
 @dataclass
 class AuteurDao(Dao[Auteur]):
 
+    def read(self, id_auteur: int) -> Optional[Auteur]:
+        try:
+            """
+            Jointure entre personne et auteur pour recuperer nom et prenom 
+            """
+            with Dao.connection.cursor() as cursor:
+                sql_personne = """
+                    SELECT p.nom, p.prenom
+                    FROM auteur AS a
+                    INNER JOIN personne AS p
+                        ON p.id_personne = a.id_personne
+                    WHERE a.id_auteur = %s
+                """
+                cursor.execute(sql_personne, (id_auteur,))
+                row = cursor.fetchone()
+
+                if row is None:
+                    return None
+
+                return Auteur(
+                    nom=row["nom"],
+                    prenom=row["prenom"]
+                )
+
+        except Exception as e:
+            print("Erreur de la lecture d'un auteur :", e)
+            return None
+
     def create(self, auteur: Auteur) -> int:
         try:
 
@@ -37,32 +65,6 @@ class AuteurDao(Dao[Auteur]):
         except Exception as e:
             print("Erreur lors de la création d'un auteur :", e)
             return 0
-
-    def read(self, id_auteur: int) -> Optional[Auteur]:
-        try:
-            with Dao.connection.cursor() as cursor:
-                sql = """
-                    SELECT p.nom, p.prenom
-                    FROM auteur AS a
-                    INNER JOIN personne AS p
-                        ON p.id_personne = a.id_personne
-                    WHERE a.id_auteur = %s
-                """
-                cursor.execute(sql, (id_auteur,))
-                row = cursor.fetchone()
-
-                if row is None:
-                    return None
-
-                return Auteur(
-                    id_personne=None,
-                    nom=row["nom"],
-                    prenom=row["prenom"]
-                )
-
-        except Exception as e:
-            print("Erreur de la lecture d'un auteur :", e)
-            return None
 
     def read_all(self) -> list[Auteur]:
         raise NotImplemented
