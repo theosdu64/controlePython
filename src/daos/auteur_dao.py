@@ -6,12 +6,12 @@ Classe Auteur d'un livre
 
 import dataclasses
 from typing import Optional
-
+from dataclasses import dataclass
 from src.daos.dao import Dao
 from src.model.auteur import Auteur
 
 
-@dataclasses
+@dataclass
 class AuteurDao(Dao[Auteur]):
 
     def create(self, auteur: Auteur) -> int:
@@ -41,7 +41,6 @@ class AuteurDao(Dao[Auteur]):
     def read(self, id_auteur: int) -> Optional[Auteur]:
         try:
             with Dao.connection.cursor() as cursor:
-
                 sql = """
                     SELECT p.nom, p.prenom
                     FROM auteur AS a
@@ -56,7 +55,7 @@ class AuteurDao(Dao[Auteur]):
                     return None
 
                 return Auteur(
-                    id_auteur=id_auteur,
+                    id_personne=None,
                     nom=row["nom"],
                     prenom=row["prenom"]
                 )
@@ -64,6 +63,9 @@ class AuteurDao(Dao[Auteur]):
         except Exception as e:
             print("Erreur de la lecture d'un auteur :", e)
             return None
+
+    def read_all(self) -> list[Auteur]:
+        raise NotImplemented
 
     def update(self, id_auteur, obj : Auteur) -> bool:
         raise NotImplemented
