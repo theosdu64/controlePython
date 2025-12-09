@@ -12,7 +12,7 @@ from typing import Optional
 @dataclass
 class Personne(ABC):
     """Personne liée aux prix goncourt : Jury et Auteur."""
-    id_personne: Optional[int]
+    id_personne: Optional[int] = field(default=None, init=False)
     nom: str
     prenom: str
 
