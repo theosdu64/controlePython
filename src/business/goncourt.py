@@ -7,6 +7,8 @@ from src.model.auteur import Auteur
 from src.model.jury import Jury
 from src.model.livre import Livre
 
+from src.daos.editeur_dao import EditeurDao
+from src.model.editeur import Editeur
 
 @dataclass
 class Goncourt:
@@ -42,3 +44,14 @@ class Goncourt:
         """
         livre_dao : Livre = LivreDao()
         return livre_dao.read(id_livre)
+
+    @staticmethod
+    def get_editeur_by_id(id_editeur : int) -> Optional[Editeur]:
+        """
+        Recupere le nom de l'editeur a l'aide de son id
+
+        :param id_editeur:
+        :return: no mde l'editeur
+        """
+        editeur_dao : Editeur = EditeurDao()
+        return editeur_dao.read(id_editeur)

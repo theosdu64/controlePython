@@ -18,6 +18,9 @@ def main() -> None:
         print(f"Éditeur  : {data['editeur_nom']}")
     else:
         print("Livre non trouvé")
+    print("-" * 60)
+    print(Goncourt.get_editeur_by_id(1))
+    print("-" * 60)
 
 
 if __name__ == "__main__":
