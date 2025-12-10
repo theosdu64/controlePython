@@ -17,5 +17,5 @@ class Jury(Personne):
 
     def __str__(self) -> str:
         person_str = super().__str__()
-        statut = "est le président du jury" if self.est_president else "n'est pas le président du jury"
+        statut = "est le président" if self.est_president else "n'est pas le président"
         return f"{person_str}, {statut}"

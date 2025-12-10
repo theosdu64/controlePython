@@ -33,8 +33,35 @@ class JuryDao(Dao[Jury]):
         except Exception as e:
             print(e)
 
-    def read_all(self) -> List[Jury]:
-        raise NotImplemented
+    def read_all(self, id_jury: int) -> List[Jury]:
+        """
+        Lire tous les membres du jury d'une sélection
+        """
+        try:
+            with Dao.connection.cursor() as cursor:
+                sql_jury = """
+                    SELECT p.nom, p.prenom, em.est_president
+                    FROM est_membre AS em
+                    INNER JOIN personne AS p
+                        ON p.id_personne = em.id_personne
+                    WHERE em.id_jury = %s
+                """
+                cursor.execute(sql_jury, (id_jury,))
+                records = cursor.fetchall()
+
+                jurys = []
+                for record in records:
+                    jury = Jury(
+                        record['nom'],
+                        record['prenom'],
+                        record['est_president']
+                    )
+                    jurys.append(jury)
+                return jurys
+
+        except Exception as e:
+            print(f"Erreur lors de la lecture de juryDao : {e}")
+            return []
 
     def create(self, jury: Jury) -> int:
         raise NotImplemented
