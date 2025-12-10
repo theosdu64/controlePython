@@ -108,9 +108,69 @@ class Goncourt:
         personnage_dao = PersonnageDao()
         return personnage_dao.read(id_personnage)
 
-    # Selection
+    # ---------------------------Selection------------------------------------------
+    def print_selection(selection: Selection) -> None:
+        print("\n" + "=" * 80)
+        print(f"NUMERO DU TOUR {selection.numero_tour}".center(80))
+
+        print(f"  Date sélection : {selection.date_selection}")
+        print(f"  Nombre de livres : {selection.nb_livre}")
+
+    def print_livres(livres: list[Livre]) -> None:
+        print("\n" + "=" * 90)
+        print(f"{'LIVRES QUALIFIE':^90}")
+        print("=" * 90)
+
+        print(f"{'TITRE':<40} {'DATE':<15} {'PAGES':<8} {'PRIX (€)':<10}")
+        print("-" * 90)
+
+        for livre in livres:
+            print(f"{livre.titre:<40} "
+                  f"{str(livre.date_parution):<15} "
+                  f"{livre.nb_page:<8} "
+                  f"{float(livre.prix):<10.2f}")
+
+        print("=" * 90)
+        print(f"Total : {len(livres)} livres\n")
+
+    def print_jury(jury: list[Jury]) -> None:
+        print("\n" + "=" * 90)
+        print(f"{'JURY DU PRIX GONCOURT':^90}")
+        print("=" * 90)
+
+        print(f"{'Nom':<30} {'Prénom':<30} {'Président':<30}")
+        print("-" * 90)
+
+        for membre in jury:
+            is_pres = "Oui" if membre.est_president else "Non"
+            print(f"{membre.nom:<30} {membre.prenom:<30} {is_pres:<30}")
+
+        print("=" * 90)
+        print(f"Total : {len(jury)} membres du jury\n")
+
     @staticmethod
     def get_selection_by_numero_tour(numero_tour: int) -> Optional[Selection]:
         """Recuperé une selection d'un tour"""
         selection_dao = SelectionDao()
         return selection_dao.read(numero_tour)
+
+    @staticmethod
+    def get_all_selection_data_by_numero_tour(numero_tour: int) -> None:
+        selection_dao = SelectionDao()
+        livre_dao = LivreDao()
+        jury_dao = JuryDao()
+
+        selection: Selection = selection_dao.read(numero_tour)
+        if selection is None:
+            print("Aucune sélection trouvée.")
+            return
+
+        livres: list[Livre] = livre_dao.read_all_by_selection(selection.id_selection)
+        jury: list[Jury] = jury_dao.read_all(selection.id_jury)
+
+
+        Goncourt.print_selection(selection)
+        Goncourt.print_livres(livres)
+        Goncourt.print_jury(jury)
+
+
