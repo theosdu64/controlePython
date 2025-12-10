@@ -32,7 +32,13 @@ def main() -> None:
     print(Goncourt.get_selection_by_numero_tour(1))
 
     print("-" * 60)
-    print(Goncourt.get_all_selection_data_by_numero_tour(2))
+    Goncourt.get_all_selection_data_by_numero_tour(2)
+
+    print("-" * 60)
+    Goncourt.get_vote_by_selection(1)
+
+    print("-" * 60)
+    print(Goncourt.create_vote(1, 9))
 
 if __name__ == "__main__":
     main()

@@ -5,6 +5,7 @@ from src.daos.jury_dao import JuryDao
 from src.daos.livre_dao import LivreDao
 from src.daos.personnage_dao import PersonnageDao
 from src.daos.selection_dao import SelectionDao
+from src.daos.vote_dao import VoteDao
 
 from src.model.personnage import Personnage
 from src.model.auteur import Auteur
@@ -13,6 +14,7 @@ from src.model.livre import Livre
 from src.daos.editeur_dao import EditeurDao
 from src.model.editeur import Editeur
 from src.model.selection import Selection
+from src.model.vote import Vote
 
 
 @dataclass
@@ -107,6 +109,32 @@ class Goncourt:
         """Recupere le nom du personnage a l'aide de son id"""
         personnage_dao = PersonnageDao()
         return personnage_dao.read(id_personnage)
+
+    # ---------------------------Vote------------------------------------------
+    @staticmethod
+    def get_vote_by_selection(id_selection: int) -> list[Vote] :
+        """
+        Recuperer tous les votes d'une selection
+
+        :param id_selection:
+        :return: List de vote avec titre du livre
+        """
+        vote_dao = VoteDao()
+        result = vote_dao.read(id_selection)
+
+        print("\nVOTES DE LA SELECTION 1")
+        print("=" * 60)
+
+        for vote, titre in result:
+            print(f"Livre : {titre}")
+            print(vote)
+            print("-" * 60)
+
+    @staticmethod
+    def create_vote(id_selection: int, id_livre: int) -> Optional[Vote]:
+        """Créer un vote """
+        vote_dao = VoteDao()
+        return vote_dao.create(id_selection, id_livre)
 
     # ---------------------------Selection------------------------------------------
     def print_selection(selection: Selection) -> None:
