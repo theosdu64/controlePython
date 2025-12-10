@@ -58,6 +58,41 @@ class LivreDao(Dao[Livre]):
             print("Erreur de la lecture du livre :", e)
             return None
 
+    def read_all_by_selection(self, id_selection: int) -> list[Livre]:
+        """Récupère tous les livres d'une sélection"""
+        try:
+            with Dao.connection.cursor() as cursor:
+                sql_livre = """
+                    SELECT l.titre, l.resume, l.date_parution, l.nb_page, l.isbn, l.prix
+                    FROM livre as l 
+                    INNER JOIN fait_partie_de as f
+                        ON l.id_livre = f.id_livre
+                    WHERE f.id_selection = %s
+                """
+                cursor.execute(sql_livre, (id_selection,))
+                rows = cursor.fetchall()
+
+                livres = []
+                for row in rows:
+                    livre = Livre(
+                        titre=row["titre"],
+                        resume=row["resume"],
+                        date_parution=row["date_parution"],
+                        nb_page=row["nb_page"],
+                        isbn=row["isbn"],
+                        prix=row["prix"]
+                    )
+                    livres.append(livre)
+
+                return livres
+
+        except Exception as e:
+            print(f"Erreur lors de la lecture des livres : {e}")
+            import traceback
+            traceback.print_exc()
+            return []
+
+
     def read_all(self) -> list[Livre]:
         raise NotImplementedError
 
@@ -69,6 +104,7 @@ class LivreDao(Dao[Livre]):
 
     def update(self, livre: Livre) -> Livre:
         raise NotImplementedError
+
 
     def get_personnage_by_livre_id(self, livre_id: int) -> Optional[Personnage]:
         """
