@@ -16,7 +16,7 @@ class SelectionDao:
         try:
             with Dao.connection.cursor() as cursor:
                 sql_selection = """
-                SELECT s.numero_tour, s.date_selection, s.nb_livre
+                SELECT s.numero_tour, s.date_selection, s.nb_livre, s.id_selection, s.id_jury
                 FROM selection AS s
                 WHERE s.numero_tour = %s
                 """
@@ -27,9 +27,11 @@ class SelectionDao:
                     return None
 
                 return Selection(
+                    id_selection = row["id_selection"],
                     numero_tour=row["numero_tour"],
                     date_selection=row["date_selection"],
-                    nb_livre=row["nb_livre"]
+                    nb_livre=row["nb_livre"],
+                    id_jury=row["id_jury"]
                 )
 
         except Exception as e:
