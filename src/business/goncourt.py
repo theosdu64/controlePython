@@ -216,3 +216,213 @@ class Goncourt:
             return "Tour inconnu"
 
 
+    @staticmethod
+    def processus_de_selection() -> Any:
+        jury_dao = JuryDao()
+        selection_dao = SelectionDao()
+        livre_dao = LivreDao()
+        vote_dao = VoteDao()
+
+        year_today = datetime.today().year
+        print(f"\n{'=' * 60}")
+        print(f"Processus de seleection pour l'annee : {year_today}")
+        print(f"{'=' * 60}\n")
+
+        # Recuperation du jury et des selectiond de l'annee
+
+        jury_actuel = jury_dao.read_by_year(year_today)
+        if not jury_actuel:
+            print(f"Aucun jury trouvé pour l'année {year_today}")
+            return
+
+        print(f"Année Jury sélectionné : {jury_actuel.annee}\n")
+
+        selections = selection_dao.read_all_by_year(year_today)
+        if not selections:
+            print(f"Aucune sélection trouvée pour l'année {year_today}")
+            return
+
+        # Affichage des tours existant
+
+        print(f"Tours de sélection pour l'année {year_today}:\n")
+        print(f"{'ID Sélection':<15} {'Tour':<8} {'Date':<15} {'Nb livres':<12} {'ID Jury':<10}")
+        print("-" * 70)
+
+        for sel in selections:
+            print(f"{sel.id_selection:<15} {sel.numero_tour:<8} "
+                  f"{sel.date_selection.strftime('%Y-%m-%d'):<15} "
+                  f"{sel.nb_livre:<12} {sel.id_jury:<10}")
+
+        # Déterminer le tour actuel
+        numero_tour_max = max(sel.numero_tour for sel in selections)
+        id_selection_actuelle = max(sel.id_selection for sel in selections if sel.numero_tour == numero_tour_max)
+
+        print(f"\n{'=' * 70}")
+        print(f"Tour actuel : {Goncourt.getTour(numero_tour_max)}")
+        print(f"{'=' * 70}\n")
+
+
+        # Affichage des livres du tour actuel
+        livres = livre_dao.read_all_by_selection(id_selection_actuelle)
+
+        if not livres:
+            print(f"Aucun livre trouvé pour la sélection avec l'id : {id_selection_actuelle}")
+            return
+
+        print(f"Livres en compétition (Tour {numero_tour_max}):\n")
+        print(f"{'ID':<5} {'TITRE':<30} {'DATE PARUTION':<15} {'PAGES':<8} {'PRIX':<10}")
+        print("=" * 75)
+
+        for livre in livres:
+            print(f"{livre.id_livre:<5} {livre.titre:<30} "
+                  f"{livre.date_parution.strftime('%Y-%m-%d'):<15} "
+                  f"{livre.nb_page:<8} {livre.prix:<10.2f}€")
+
+        print("=" * 75)
+        print(f"Total : {len(livres)} livres en compétition\n")
+
+        # Saisie des votes
+
+        print("PHASE DE VOTE")
+        print("-" * 70)
+        print("Format attendu : id_livre,nb_votes ...")
+        print("Exemple : 1,5 3,8 7,12")
+        print("-" * 70)
+
+        vote_input = input("\nEntrez les votes : ").strip()
+
+        if not vote_input:
+            print("Aucun vote saisi , processus terminé.")
+            return
+
+        # Enregistrement des votes
+
+        votes = []
+        print("\nEnregistrement des votes")
+
+        for vote_str in vote_input.split():
+            try:
+                id_livre, nb_vote = vote_str.split(",")
+                id_livre = int(id_livre)
+                nb_vote = int(nb_vote)
+
+                # Créer le vote pour le tour actuel
+                vote = vote_dao.create(
+                    id_selection=id_selection_actuelle,
+                    id_livre=id_livre,
+                    nb_voix=nb_vote
+                )
+
+                if vote:
+                    votes.append((id_livre, nb_vote))
+                    print(f"vote enregistré : Livre {id_livre} → {nb_vote} voix")
+                else:
+                    print(f"erreur lors de l'enregistrement du vote pour le livre {id_livre}")
+
+            except ValueError:
+                print(f"format invalide : '{vote_str}' ignoré")
+                continue
+
+        if not votes:
+            print("\n aucun vote valide enregistre.")
+            return
+
+        # Affichage des resultat du vote
+
+        print(f"\n{'=' * 70}")
+        print("Resultat du vote")
+        print(f"{'=' * 70}\n")
+
+        resultats_votes = vote_dao.read(id_selection_actuelle)
+
+        if resultats_votes:
+            print(f"{'Rang':<6} {'ID Livre':<10} {'Titre':<30} {'Voix':<10}")
+            print("-" * 70)
+
+            for i, (vote, titre) in enumerate(resultats_votes, 1):
+                print(f"{i:<6} {vote.id_livre:<10} {titre:<30} {vote.nb_voix:<10}")
+
+            print("=" * 70)
+
+        # Trouver les qualifié
+
+        # Définir le nombre de qualifiés selon le tour
+        nb_qualifies_dict = {
+            1: 8,
+            2: 4,
+            3: 1
+        }
+
+        nb_qualifies = nb_qualifies_dict.get(numero_tour_max, 1)
+
+        print(f"\n nombre de qualifiés pour le prochain tour : {nb_qualifies}")
+
+        livres_qualifies = resultats_votes[:nb_qualifies] if resultats_votes else []
+
+        if not livres_qualifies:
+            print("Pas de livre qualifié.")
+            return
+
+        print(f"\n Livres qualifié :")
+        for i, (vote, titre) in enumerate(livres_qualifies, 1):
+            print(f"  {i}. Id livre {vote.id_livre} - {titre} ({vote.nb_voix} voix)")
+
+        # 8 Création de la nouvelle selection
+
+        nouveau_tour = numero_tour_max + 1
+        nouvel_id_selection = id_selection_actuelle + 1
+
+        print(f"\n{'=' * 70}")
+        print(f" creation du tour {nouveau_tour}")
+        print(f"{'=' * 70}\n")
+
+        nouvelle_selection = Selection(
+            id_selection=nouvel_id_selection,
+            numero_tour=nouveau_tour,
+            date_selection=datetime.today(),
+            nb_livre=nb_qualifies,
+            id_jury=jury_actuel.id_jury
+        )
+
+        selection_cree = selection_dao.create(nouvelle_selection)
+
+        if not selection_cree:
+            print("erreur de creation de la sélection")
+            return
+
+        print(f" sélection créée avec l'ID {nouvel_id_selection}, tour numero : {nouveau_tour}, "
+              f"{nb_qualifies} livre")
+
+        # Ajout des livres qualifie dans la nouvelle selection
+
+        print(f"\n Ajout des livres qualifiés dans la nouvelle sélection...")
+
+        for vote, titre in livres_qualifies:
+            resultat = selection_dao.updates_of_qualifiers(vote.id_livre, nouvel_id_selection)
+            if resultat:
+                print(f"livre {vote.id_livre} ajouté à la sélection {nouvel_id_selection}")
+            else:
+                print(f"erreur lors de l'ajout du livre {vote.id_livre}")
+
+        # Affichage final
+
+        print(f"\n{'=' * 70}")
+        print(f"Processus Terminé {nouveau_tour} prêt")
+        print(f"{'=' * 70}\n")
+
+        # Afficher les livres du nouveau tour
+        livres_nouveau_tour = livre_dao.read_all_by_selection(nouvel_id_selection)
+
+        print(f"Livres qualifiés pour le {Goncourt.getTour(nouveau_tour)}:\n")
+        print(f"{'ID':<5} {'TITRE':<30} {'DATE PARUTION':<15} {'PAGES':<8} {'PRIX':<10}")
+        print("=" * 75)
+
+        for livre in livres_nouveau_tour:
+            print(f"{livre.id_livre:<5} {livre.titre:<30} "
+                  f"{livre.date_parution.strftime('%Y-%m-%d'):<15} "
+                  f"{livre.nb_page:<8} {livre.prix:<10.2f}€")
+
+        print("=" * 75)
+        print(f"\n{'Le livre a gagné le prix Goncourt : ' if len(livres_nouveau_tour) == 1 else 'Livres en compétition pour le prochain tour'}\n")
+
+
