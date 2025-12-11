@@ -70,10 +70,11 @@ class SelectionDao:
         try:
             with Dao.connection.cursor() as cursor:
                 sql_selection = """
-                    INSERT INTO selection (numero_tour, date_selection, nb_livre, id_jury)
-                    VALUES (%s, %s, %s, %s)
+                    INSERT INTO selection (id_selection,numero_tour, date_selection, nb_livre, id_jury)
+                    VALUES (%s, %s, %s, %s, %s)
                 """
                 cursor.execute(sql_selection, (
+                    selection.id_selection,
                     selection.numero_tour,
                     selection.date_selection,
                     selection.nb_livre,
@@ -95,3 +96,20 @@ class SelectionDao:
 
     def update(self) -> Selection:
         raise NotImplemented
+
+    def updates_of_qualifiers(self, id_livre, id_selection):
+        try:
+            with Dao.connection.cursor() as cursor:
+                sql = """
+                    INSERT INTO fait_partie_de (id_livre, id_selection)
+                    VALUES (%s, %s)
+                """
+                cursor.execute(sql, (id_livre, id_selection))
+                Dao.connection.commit()
+
+                return (id_livre, id_selection)
+
+        except Exception as e:
+            print(f"Erreur lors de l'insertion dans fait_partie_de (selection_dao) : {e}")
+            Dao.connection.rollback()
+            return None
