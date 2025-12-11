@@ -38,11 +38,57 @@ class SelectionDao:
             print(e)
             return None
 
+    def read_all_by_year(self, year: int) -> list[Selection]:
+        try:
+            with Dao.connection.cursor() as cursor:
+                sql_selection = """
+                SELECT * FROM selection WHERE YEAR(date_selection) = %s;
+                """
+                cursor.execute(sql_selection, (year,))
+                rows = cursor.fetchall()
+
+                selections = []
+                for row in rows:
+                    selection = Selection(
+                        id_selection=row['id_selection'],
+                        numero_tour=row['numero_tour'],
+                        date_selection=row['date_selection'],
+                        nb_livre=row['nb_livre'],
+                        id_jury=row.get('id_jury')
+                    )
+                    selections.append(selection)
+                return selections
+
+        except Exception as e:
+            print(f"Erreur read_all_by_year: {e}")
+            return []
+
     def read_all(self) -> Selection:
         raise NotImplemented
 
-    def create(self) -> Selection:
-        raise NotImplemented
+    def create(self, selection: Selection) -> Optional[Selection]:
+        try:
+            with Dao.connection.cursor() as cursor:
+                sql_selection = """
+                    INSERT INTO selection (numero_tour, date_selection, nb_livre, id_jury)
+                    VALUES (%s, %s, %s, %s)
+                """
+                cursor.execute(sql_selection, (
+                    selection.numero_tour,
+                    selection.date_selection,
+                    selection.nb_livre,
+                    selection.id_jury
+                ))
+                id_selection = cursor.lastrowid
+                Dao.connection.commit()
+
+                selection.id_selection = id_selection
+                return selection
+
+        except Exception as e:
+            print(f"Erreur lors de la création de la sélection : {e}")
+            Dao.connection.rollback()
+            return None
 
     def delete(self) -> Selection:
         raise NotImplemented
