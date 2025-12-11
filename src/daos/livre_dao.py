@@ -38,6 +38,7 @@ class LivreDao(Dao[Livre]):
                     return None
 
                 livre = Livre(
+                    id_livre=None,
                     titre=row["titre"],
                     resume=row["resume"],
                     date_parution=row["date_parution"],
@@ -63,7 +64,7 @@ class LivreDao(Dao[Livre]):
         try:
             with Dao.connection.cursor() as cursor:
                 sql_livre = """
-                    SELECT l.titre, l.resume, l.date_parution, l.nb_page, l.isbn, l.prix
+                    SELECT l.id_livre, l.titre, l.resume, l.date_parution, l.nb_page, l.isbn, l.prix
                     FROM livre as l 
                     INNER JOIN fait_partie_de as f
                         ON l.id_livre = f.id_livre
@@ -75,6 +76,7 @@ class LivreDao(Dao[Livre]):
                 livres = []
                 for row in rows:
                     livre = Livre(
+                        id_livre=row["id_livre"],
                         titre=row["titre"],
                         resume=row["resume"],
                         date_parution=row["date_parution"],
