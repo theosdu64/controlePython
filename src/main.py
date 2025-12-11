@@ -66,6 +66,20 @@ def main() -> None:
                 print("erreur : entrez un id valide")
                 continue
 
+        elif choix_user == '4':
+            print('Processus de selection')
+            try:
+                Goncourt.processus_de_selection()
+            except ValueError:
+                print("erreur lors du processus de selection")
+
+        elif choix_user == '5':
+            print('Réinitialisation des selections')
+            try:
+                Goncourt.reinitialiser_selections()
+            except ValueError:
+                print("Réinitialisation des selections")
+
 
 
 
