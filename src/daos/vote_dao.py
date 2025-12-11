@@ -49,7 +49,7 @@ class VoteDao(Dao[Vote]):
     def read_all(self) -> List[Vote]:
         raise NotImplemented
 
-    def create(self, id_selection: int, id_livre: int) -> Optional[Vote]:
+    def create(self, id_selection: int, id_livre: int,nb_voix : int ) -> Optional[Vote]:
         """Créer un vote pour une sélection et un livre"""
         try:
             with Dao.connection.cursor() as cursor:
@@ -59,7 +59,6 @@ class VoteDao(Dao[Vote]):
                 """
 
                 today = date.today()
-                nb_voix = 0
 
                 cursor.execute(sql_vote, (today, nb_voix, id_selection, id_livre))
                 id_vote = cursor.lastrowid
