@@ -1,11 +1,13 @@
 from dataclasses import dataclass
 from typing import Optional, Any, Dict
 from src.daos.auteur_dao import AuteurDao
+from src.daos.dao import Dao
 from src.daos.jury_dao import JuryDao
 from src.daos.livre_dao import LivreDao
 from src.daos.personnage_dao import PersonnageDao
 from src.daos.selection_dao import SelectionDao
 from src.daos.vote_dao import VoteDao
+from src.model import jury
 
 from src.model.personnage import Personnage
 from src.model.auteur import Auteur
@@ -16,6 +18,8 @@ from src.model.editeur import Editeur
 from src.model.selection import Selection
 from src.model.vote import Vote
 
+from typing import Any
+from datetime import datetime
 
 @dataclass
 class Goncourt:
@@ -200,5 +204,15 @@ class Goncourt:
         Goncourt.print_selection(selection)
         Goncourt.print_livres(livres)
         Goncourt.print_jury(jury)
+
+    def getTour(numero_tour: int) -> str:
+        if numero_tour == 1:
+            return "Premier tour (8 livres à choisir)"
+        elif numero_tour == 2:
+            return "Deuxième tour (4 livres à choisir)"
+        elif numero_tour == 3:
+            return "Troisième tour (1 livre à choisir)"
+        else:
+            return "Tour inconnu"
 
 
