@@ -80,7 +80,11 @@ def main() -> None:
             except ValueError:
                 print("Réinitialisation des selections")
 
-
+        elif choix_user == '0':
+            print('Quitter')
+            goncourt_programme = False
+        else:
+            print("choix invalide , recommencez")
 
 
 if __name__ == "__main__":
