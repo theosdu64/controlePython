@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import Optional, List
 from src.daos.dao import Dao
 from src.model.jury import Jury
+from src.model.juryTable import JuryTable
 
 @dataclass
 class JuryDao(Dao[Jury]):
@@ -62,6 +63,56 @@ class JuryDao(Dao[Jury]):
         except Exception as e:
             print(f"Erreur lors de la lecture de juryDao : {e}")
             return []
+
+    def read_all_jury_table(self) -> List[JuryTable]:
+        """
+        Visualiser les jury par année
+        """
+        try:
+            with Dao.connection.cursor() as cursor:
+                sql_jury = """
+                    SELECT * FROM jury
+                """
+                cursor.execute(sql_jury)
+                rows = cursor.fetchall()
+
+                jurys = []
+                for row in rows:
+                    jury = JuryTable(
+                        id_jury=row['id_jury'],
+                        annee=row['annee']
+                    )
+                    jurys.append(jury)
+
+                return jurys
+
+        except Exception as e:
+            print(e)
+
+    def read_by_year(self, annee: int) -> Optional[JuryTable]:
+        """Récupère le jury d'une année donnée"""
+        try:
+            with Dao.connection.cursor() as cursor:
+                sql = """
+                    SELECT id_jury, annee
+                    FROM jury
+                    WHERE annee = %s
+                """
+                cursor.execute(sql, (annee,))
+                row = cursor.fetchone()
+
+                if row is None:
+                    return None
+
+                jury = JuryTable()
+                jury.id_jury = row['id_jury']
+                jury.annee = row['annee']
+
+                return jury
+
+        except Exception as e:
+            print(f"Erreur lors de la lecture du jury par année : {e}")
+            return None
 
     def create(self, jury: Jury) -> int:
         raise NotImplemented
