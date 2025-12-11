@@ -4,7 +4,7 @@ from typing import Optional
 
 @dataclass
 class Livre():
-    id_livre : Optional[int] = field(default=None, init=False)
+    id_livre : Optional[int]
     titre : str
     resume : str
     date_parution : date
