@@ -7,38 +7,20 @@ def main() -> None:
     Bienvenue aux prix goncourt
     --------------------------""")
 
-    print("-" * 60)
-    print(Goncourt.get_auteur_by_id(11))
+    goncourt_programme = True
+    while goncourt_programme:
+        print("\n" + "-" * 50)
+        print('Menu principal du prix Goncourt - choisir par son numéro')
+        print("\n" + "-" * 50)
+        print('1 - Afficher les membres du jury')
+        print('2 - Afficher les livres des auteur')
+        print('3 - Afficher les livres du selection')
+        print('4 - Processus de selection')
+        print('5 - Réinitialisation des selections')
+        print("0 - Quitter")
 
-    print("-" * 60)
-    print(Goncourt.get_jury_by_id(1))
+        choix_user = input("\n Votre choix : ")
 
-    print("*" * 60)
-    jurys = Goncourt.get_all_jury_by_id(1)
-    Goncourt.afficher_jury(jurys)
-
-    print("-" * 60)
-    livres = Goncourt.get_all_livre_by_selection(1)
-    Goncourt.afficher_livres(livres)
-
-    print("-" * 60)
-    data = Goncourt.get_livre_by_id(1)
-    Goncourt.afficher_livre_details(data)
-
-    print("-" * 60)
-    print(Goncourt.get_personnage_by_id(2))
-
-    print("-" * 60)
-    print(Goncourt.get_selection_by_numero_tour(1))
-
-    print("-" * 60)
-    Goncourt.get_all_selection_data_by_numero_tour(2)
-
-    print("-" * 60)
-    Goncourt.get_vote_by_selection(1)
-
-    print("-" * 60)
-    print(Goncourt.create_vote(1, 9))
 
 if __name__ == "__main__":
     main()
