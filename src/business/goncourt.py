@@ -425,4 +425,36 @@ class Goncourt:
         print("=" * 75)
         print(f"\n{'Le livre a gagné le prix Goncourt : ' if len(livres_nouveau_tour) == 1 else 'Livres en compétition pour le prochain tour'}\n")
 
+    @staticmethod
+    def reinitialiser_selections() -> bool:
+        try:
+            with Dao.connection.cursor() as cursor:
+                print("\n" + "=" * 70)
+                print("Suppression de la selection")
 
+                sql_delete_votes = "DELETE FROM vote"
+                cursor.execute(sql_delete_votes)
+
+                sql_delete_fait_partie = """
+                    DELETE FROM fait_partie_de 
+                    WHERE id_selection != 1
+                """
+                cursor.execute(sql_delete_fait_partie)
+
+                sql_delete_selections = """
+                    DELETE FROM selection 
+                    WHERE id_selection != 1
+                """
+                cursor.execute(sql_delete_selections)
+                Dao.connection.commit()
+                print("\n" + "=" * 70)
+                print("Reinitialisation de selection faite")
+
+                return True
+
+        except Exception as e:
+            print(f"\n erreur de Reinitialisation : {e}")
+            Dao.connection.rollback()
+            import traceback
+            traceback.print_exc()
+            return False
