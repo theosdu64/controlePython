@@ -37,6 +37,35 @@ def main() -> None:
                 print("erreur : entrer un id valide")
                 continue
 
+        elif choix_user == '2':
+            print('Affichage dun auteur par id')
+            try:
+                id_auteur = int(input("entrez l'id de l'auteur : "))
+                auteur = Goncourt.get_auteur_by_id(id_auteur)
+
+                if auteur:
+                    print(auteur)
+                else:
+                    print("erreur : entrez un id valide")
+
+            except ValueError:
+                print("erreur : entrez un id valide")
+                continue
+
+        elif choix_user == '3':
+            print('Affichage des livres')
+            try:
+                id_selection = int(input("entrez l'id de selection : "))
+                livres = Goncourt.get_all_livre_by_selection(id_selection)
+
+                if livres:
+                    Goncourt.afficher_livres(livres)
+                else:
+                    print("erreur : entrez un id valide")
+            except ValueError:
+                print("erreur : entrez un id valide")
+                continue
+
 
 
 
