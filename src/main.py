@@ -29,7 +29,7 @@ def main() -> None:
                 jury = Goncourt.get_all_jury_by_id(id_jury)
 
                 if jury:
-                    Goncourt.afficher_jury(jury)
+                    Goncourt.display_jury(jury)
                 else:
                     print(f"aucun jury trouvé")
 
@@ -59,7 +59,7 @@ def main() -> None:
                 livres = Goncourt.get_all_livre_by_selection(id_selection)
 
                 if livres:
-                    Goncourt.afficher_livres(livres)
+                    Goncourt.display_livres(livres)
                 else:
                     print("erreur : entrez un id valide")
             except ValueError:

@@ -25,12 +25,27 @@ from datetime import datetime
 class Goncourt:
     """Couche métier de l'application de gestion du prix goncourt"""
 
+    # ---------------------------Livre------------------------------------------
+    @staticmethod
+    def get_all_livre_by_selection(id_selection: int) -> list[Livre] | None:
+        """Recuperer tous les livres d'une selection"""
+        livre_dao = LivreDao()
+        return livre_dao.read_all_by_selection(id_selection)
+
+    @staticmethod
+    def get_livre_by_id(id_livre: int) -> Optional[Dict[str, Any]]:
+        """Récupérer un livre avec son auteur et éditeur"""
+        livre_dao = LivreDao()
+        return livre_dao.read(id_livre)
+
+    # ---------------------------Auteur------------------------------------------
     @staticmethod
     def get_auteur_by_id(id_auteur: int) -> Auteur | None:
         """Récupérer un auteur a l'aide de son id"""
         auteur_dao = AuteurDao()
         return auteur_dao.read(id_auteur)
 
+    # ---------------------------Jury------------------------------------------
     @staticmethod
     def get_jury_by_id(id_jury: int) -> Jury | None:
         """Récupérer un jury a l'aide de son id"""
@@ -43,71 +58,13 @@ class Goncourt:
         jury_dao = JuryDao()
         return jury_dao.read_all(id_jury)
 
-    @staticmethod
-    def afficher_jury(jurys: list[Jury]) -> None:
-        """Affiche la liste des jurys de manière formatée"""
-        if not jurys:
-            print("Aucun jury trouvé")
-            return
-
-        print(f"\n{'=' * 70}")
-        print(f"{'PRÉNOM':<20} {'NOM':<20} {'STATUT':<15}")
-        print(f"{'=' * 70}")
-
-        for jury in jurys:
-            statut = "Président" if jury.est_president else "Membre"
-            print(f"{jury.prenom:<20} {jury.nom:<20} {statut:<15}")
-
-        print(f"{'=' * 70}\n")
-        print(f"Total : {len(jurys)} membre(s)")
-
-    @staticmethod
-    def get_livre_by_id(id_livre: int) -> Optional[Dict[str, Any]]:
-        """Récupérer un livre avec son auteur et éditeur"""
-        livre_dao = LivreDao()
-        return livre_dao.read(id_livre)
-
-    @staticmethod
-    def afficher_livre_details(data: Dict[str, Any]) -> None:
-        """Affiche les détails complets d'un livre"""
-        if not data:
-            print("Livre non trouvé")
-            return
-
-        livre = data["livre"]
-        print(livre)
-        print(f"\nAuteur   : {data['auteur_prenom']} {data['auteur_nom']}")
-        print(f"Éditeur  : {data['editeur_nom']}")
-
-    @staticmethod
-    def get_all_livre_by_selection(id_selection: int) -> list[Livre] | None:
-        """Recuperer tous les livres d'une selection"""
-        livre_dao = LivreDao()
-        return livre_dao.read_all_by_selection(id_selection)
-
-    @staticmethod
-    def afficher_livres(livres: list[Livre]) -> None:
-        """Affiche la liste des livres de manière formatée"""
-        if not livres:
-            print("Aucun livre trouvé pour cette sélection")
-            return
-
-        print(f"\n{'=' * 90}")
-        print(f"{'TITRE':<40} {'DATE PARUTION':<15} {'PAGES':<8} {'PRIX':<10}")
-        print(f"{'=' * 90}")
-
-        for livre in livres:
-            print(f"{livre.titre:<40} {str(livre.date_parution):<15} {livre.nb_page:<8} {livre.prix:<10.2f} ")
-
-        print(f"{'=' * 90}\n")
-        print(f"Total : {len(livres)} livre(s)")
-
+    # ---------------------------Editeur------------------------------------------
     @staticmethod
     def get_editeur_by_id(id_editeur: int) -> Optional[Editeur]:
         """Recupere le nom de l'editeur a l'aide de son id"""
         editeur_dao = EditeurDao()
         return editeur_dao.read(id_editeur)
-
+    # ---------------------------Personnage------------------------------------------
     @staticmethod
     def get_personnage_by_id(id_personnage: int) -> Optional[Personnage]:
         """Recupere le nom du personnage a l'aide de son id"""
@@ -205,6 +162,55 @@ class Goncourt:
         Goncourt.print_livres(livres)
         Goncourt.print_jury(jury)
 
+    # ---------------------------Methode d'affichage------------------------------------------
+    @staticmethod
+    def display_jury(jurys: list[Jury]) -> None:
+        """Affiche la liste des jurys de manière formatée"""
+        if not jurys:
+            print("Aucun jury trouvé")
+            return
+
+        print(f"\n{'=' * 70}")
+        print(f"{'PRÉNOM':<20} {'NOM':<20} {'STATUT':<15}")
+        print(f"{'=' * 70}")
+
+        for jury in jurys:
+            statut = "Président" if jury.est_president else "Membre"
+            print(f"{jury.prenom:<20} {jury.nom:<20} {statut:<15}")
+
+        print(f"{'=' * 70}\n")
+        print(f"Total : {len(jurys)} membre(s)")
+
+    @staticmethod
+    def display_livre_details(data: Dict[str, Any]) -> None:
+        """Affiche les détails complets d'un livre"""
+        if not data:
+            print("Livre non trouvé")
+            return
+
+        livre = data["livre"]
+        print(livre)
+        print(f"\nAuteur   : {data['auteur_prenom']} {data['auteur_nom']}")
+        print(f"Éditeur  : {data['editeur_nom']}")
+
+    @staticmethod
+    def display_livres(livres: list[Livre]) -> None:
+        """Affiche la liste des livres de manière formatée"""
+        if not livres:
+            print("Aucun livre trouvé pour cette sélection")
+            return
+
+        print(f"\n{'=' * 90}")
+        print(f"{'TITRE':<40} {'DATE PARUTION':<15} {'PAGES':<8} {'PRIX':<10}")
+        print(f"{'=' * 90}")
+
+        for livre in livres:
+            print(f"{livre.titre:<40} {str(livre.date_parution):<15} {livre.nb_page:<8} {livre.prix:<10.2f} ")
+
+        print(f"{'=' * 90}\n")
+        print(f"Total : {len(livres)} livre(s)")
+
+    # ---------------------------Methode procesus de selecction------------------------------------------
     def getTour(numero_tour: int) -> str:
         if numero_tour == 1:
             return "Premier tour (8 livres à choisir)"
@@ -215,9 +221,33 @@ class Goncourt:
         else:
             return "Tour inconnu"
 
-
+    # ---------------------------Methode de Processus------------------------------------------
     @staticmethod
     def processus_de_selection() -> Any:
+        """
+        Gère le processus de sélection du Prix Goncourt en permettant au président
+        de voter pour les livres et de les qualifier
+
+        - Recupere le jury
+        - Identifie le tour en fonction de selectection et annee actuel
+        - Affiche les livre en competition
+        - Indication des vote et enregistement du resultat
+        - Selectionne les livre qualifie selon le tour
+        - Creation de la nouvelle selection
+
+        Format des votes :
+        id_livre,nb_votes
+
+        Indication du president pour copier/coller
+        1er Tour : 1,2 3,1 4,2 5,1 6,1 7,1 8,1 2,1
+        2eme Tour : 4,2 1,2 8,2 3,4
+        3eme Tour : 1,10
+
+        Condition :
+        - La premiere selection deja enregistre en BDD
+
+        :return: Void
+        """
         jury_dao = JuryDao()
         selection_dao = SelectionDao()
         livre_dao = LivreDao()
@@ -225,17 +255,13 @@ class Goncourt:
 
         year_today = datetime.today().year
         print(f"\n{'=' * 60}")
-        print(f"Processus de seleection pour l'annee : {year_today}")
-        print(f"{'=' * 60}\n")
-
-        # Recuperation du jury et des selectiond de l'annee
-
         jury_actuel = jury_dao.read_by_year(year_today)
         if not jury_actuel:
             print(f"Aucun jury trouvé pour l'année {year_today}")
             return
 
-        print(f"Année Jury sélectionné : {jury_actuel.annee}\n")
+        print(f"Année Jury sélectionné AUTOMATIQUEMENT selon année en cours: {jury_actuel.annee}")
+        print(f"{'=' * 60}\n")
 
         selections = selection_dao.read_all_by_year(year_today)
         if not selections:
@@ -243,8 +269,6 @@ class Goncourt:
             return
 
         # Affichage des tours existant
-
-        print(f"Tours de sélection pour l'année {year_today}:\n")
         print(f"{'ID Sélection':<15} {'Tour':<8} {'Date':<15} {'Nb livres':<12} {'ID Jury':<10}")
         print("-" * 70)
 
@@ -256,11 +280,6 @@ class Goncourt:
         # Déterminer le tour actuel
         numero_tour_max = max(sel.numero_tour for sel in selections)
         id_selection_actuelle = max(sel.id_selection for sel in selections if sel.numero_tour == numero_tour_max)
-
-        print(f"\n{'=' * 70}")
-        print(f"Tour actuel : {Goncourt.getTour(numero_tour_max)}")
-        print(f"{'=' * 70}\n")
-
 
         # Affichage des livres du tour actuel
         livres = livre_dao.read_all_by_selection(id_selection_actuelle)
@@ -284,9 +303,14 @@ class Goncourt:
         # Saisie des votes
 
         print("PHASE DE VOTE")
-        print("-" * 70)
+        print(f"\n{'=' * 70}")
+        print(f"Tour actuel : {Goncourt.getTour(numero_tour_max)}")
+        print(f"{'=' * 70}\n")
         print("Format attendu : id_livre,nb_votes ...")
-        print("Exemple : 1,5 3,8 7,12")
+        print("Exemple Conseillez  :")
+        print("1er Tour : 1,2 3,1 4,2 5,1 6,1 7,1 8,1 2,1")
+        print("2eme Tour : 4,2 1,2 8,2 3,4")
+        print("3eme Tour : 1,10")
         print("-" * 70)
 
         vote_input = input("\nEntrez les votes : ").strip()
@@ -298,7 +322,6 @@ class Goncourt:
         # Enregistrement des votes
 
         votes = []
-        print("\nEnregistrement des votes")
 
         for vote_str in vote_input.split():
             try:
@@ -315,7 +338,6 @@ class Goncourt:
 
                 if vote:
                     votes.append((id_livre, nb_vote))
-                    print(f"vote enregistré : Livre {id_livre} → {nb_vote} voix")
                 else:
                     print(f"erreur lors de l'enregistrement du vote pour le livre {id_livre}")
 
@@ -344,8 +366,6 @@ class Goncourt:
 
             print("=" * 70)
 
-        # Trouver les qualifié
-
         # Définir le nombre de qualifiés selon le tour
         nb_qualifies_dict = {
             1: 8,
@@ -362,10 +382,6 @@ class Goncourt:
         if not livres_qualifies:
             print("Pas de livre qualifié.")
             return
-
-        print(f"\n Livres qualifié :")
-        for i, (vote, titre) in enumerate(livres_qualifies, 1):
-            print(f"  {i}. Id livre {vote.id_livre} - {titre} ({vote.nb_voix} voix)")
 
         # 8 Création de la nouvelle selection
 
@@ -390,30 +406,24 @@ class Goncourt:
             print("erreur de creation de la sélection")
             return
 
-        print(f" sélection créée avec l'ID {nouvel_id_selection}, tour numero : {nouveau_tour}, "
-              f"{nb_qualifies} livre")
+        print(f"Nouvelle sélection crée")
 
-        # Ajout des livres qualifie dans la nouvelle selection
-
-        print(f"\n Ajout des livres qualifiés dans la nouvelle sélection...")
-
+        # Ajouter les livre qualifie en BDD
         for vote, titre in livres_qualifies:
-            resultat = selection_dao.updates_of_qualifiers(vote.id_livre, nouvel_id_selection)
-            if resultat:
-                print(f"livre {vote.id_livre} ajouté à la sélection {nouvel_id_selection}")
-            else:
-                print(f"erreur lors de l'ajout du livre {vote.id_livre}")
-
-        # Affichage final
+            selection_dao.updates_of_qualifiers(vote.id_livre, nouvel_id_selection)
 
         print(f"\n{'=' * 70}")
-        print(f"Processus Terminé {nouveau_tour} prêt")
+        print(f"Processus Terminé , prochain tour : {nouveau_tour}")
         print(f"{'=' * 70}\n")
 
         # Afficher les livres du nouveau tour
         livres_nouveau_tour = livre_dao.read_all_by_selection(nouvel_id_selection)
 
-        print(f"Livres qualifiés pour le {Goncourt.getTour(nouveau_tour)}:\n")
+        print(
+            f"{'Le livre gagnant de Prix Goncourt est '
+            if Goncourt.getTour(nouveau_tour) == 'Tour inconnu'
+            else f'Livres qualifiés pour le {Goncourt.getTour(nouveau_tour)}\n'}"
+        )
         print(f"{'ID':<5} {'TITRE':<30} {'DATE PARUTION':<15} {'PAGES':<8} {'PRIX':<10}")
         print("=" * 75)
 
@@ -422,11 +432,17 @@ class Goncourt:
                   f"{livre.date_parution.strftime('%Y-%m-%d'):<15} "
                   f"{livre.nb_page:<8} {livre.prix:<10.2f}€")
 
-        print("=" * 75)
-        print(f"\n{'Le livre a gagné le prix Goncourt : ' if len(livres_nouveau_tour) == 1 else 'Livres en compétition pour le prochain tour'}\n")
-
     @staticmethod
     def reinitialiser_selections() -> bool:
+        """
+        Réinitialise toutes les sélections pour repartie a zéro
+
+        - Supprime tt les votes
+        - Supprime tt les relation la table 'fait_partie_de'
+        - Supprime tt les relation la table 'selection' sauf les 15 premiere selection
+
+        :return: True
+        """
         try:
             with Dao.connection.cursor() as cursor:
                 print("\n" + "=" * 70)
